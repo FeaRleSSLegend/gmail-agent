@@ -15,7 +15,7 @@ def get_unread_messages():
         
         # If messages are found
         msgs_list = []
-        print("Messages:\n")
+
         # Loop through each message to get the ID and a message snippet
         for message in messages:
             msg_id = message["id"]
@@ -44,4 +44,3 @@ def get_unread_count():
     result = service.users().messages().list(userId='me', labelIds=["UNREAD"], maxResults=10).execute()
     return result.get("resultSizeEstimate",0)
 
-print(get_unread_count())
