@@ -2,7 +2,7 @@ from groq import Groq
 from dotenv import load_dotenv
 import os
 import json
-from tools import get_unread_count, get_unread_messages
+from tools import get_unread_count, get_unread_messages, search_email, read_full_email, delete_email, send_email
 
 load_dotenv()
 
@@ -33,6 +33,82 @@ tools = [
         }
     }
 },
+{
+    "type": "function",
+    "function": {
+        "name": "search_email",
+        "description": "A function that searches for an email or emails based on a query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The question the user asks or information the user needs."
+                }
+            },
+            "required": ["query"]
+        }
+    }
+},
+{
+    "type": "function",
+    "function": {
+        "name": "read_full_email",
+        "description": "A function that reads the full content of an email. Which contains subject, sender and body.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email_id": {
+                    "type": "string",
+                    "description": "The unique identifier used to find the email."
+                }
+            },
+            "required": ["email_id"]
+        }
+    }
+},
+{
+    "type": "function",
+    "function": {
+        "name": "delete_email",
+        "description": "A function that deletes an email given the ID of the email to be deleted.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "email_id": {
+                    "type": "string",
+                    "description": "The unique identifier used to find the email."
+                }
+            },
+            "required": ["email_id"]
+        }
+    }
+},
+{
+    "type": "function",
+    "function": {
+        "name": "send_email",
+        "description": "A function that sends an email. It needs 'to','subject', and 'body'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "to": {
+                    "type": "string",
+                    "description": "The email address of the person the message is being sent to."
+                },
+                "subject": {
+                    "type": "string",
+                    "description": "A short sentence or phrase that explains what the email is about."
+                },
+                "body": {
+                    "type": "string",
+                    "description": "The main content of the email. The message being sent."
+                }
+            },
+            "required": ["to","subject","body"]
+        }
+    }
+}
 ]
 
 def run_agent(query: str):
@@ -45,7 +121,11 @@ def run_agent(query: str):
     # The list of available tools
     available_tools = {
         "get_unread_messages": get_unread_messages,
-        "get_unread_count": get_unread_count
+        "get_unread_count": get_unread_count,
+        "search_email":search_email,
+        "read_full_email":read_full_email,
+        "delete_email":delete_email,
+        "send_email":send_email
     }
 
     # The loop to run the agent
